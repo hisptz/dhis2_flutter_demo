@@ -2,6 +2,7 @@ import 'package:dhis2_demo_app/core/constants/app_constants.dart';
 import 'package:dhis2_demo_app/modules/home/components/program_summary_card.dart';
 import 'package:dhis2_demo_app/modules/home/models/program.dart';
 import 'package:dhis2_demo_app/modules/home/services/programs_service.dart';
+import 'package:dhis2_demo_app/modules/login/login_page.dart';
 import 'package:dhis2_demo_app/modules/login/models/user.dart';
 import 'package:dhis2_demo_app/modules/login/services/user_service.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late List<Program> programs;
   final String title = 'DHIS2 programs explorer';
+
+  onLogout(BuildContext context) {
+    UserService().logout().then(
+          (_) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LoginPage(),
+            ),
+          ),
+        );
+  }
 
   Future<void> fetchPrograms() async {
     var currentUser = await UserService().getCurrentUserCredentials();
@@ -56,6 +68,18 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
           ),
         ),
+        actions: [
+          InkWell(
+            onTap: () => onLogout(context),
+            child: Container(
+              margin: const EdgeInsets.all(4.0),
+              child: const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
         backgroundColor: AppConstants.defaultColor,
         scrolledUnderElevation: 4.0,
         shadowColor: Theme.of(context).shadowColor,
