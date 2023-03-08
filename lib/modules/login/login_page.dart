@@ -1,10 +1,13 @@
+import 'package:dhis2_demo_app/core/components/circular_loader.dart';
 import 'package:dhis2_demo_app/core/components/password_input_field_container.dart';
-import 'package:dhis2_demo_app/core/components/text_input_field_contianer.dart';
+import 'package:dhis2_demo_app/core/components/text_input_field_container.dart';
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
 import 'package:dhis2_demo_app/core/models/input_field.dart';
 import 'package:dhis2_demo_app/core/utils/app_utils.dart';
 import 'package:dhis2_demo_app/modules/home/pages/home_page.dart';
 import 'package:dhis2_demo_app/modules/login/constants/login_constants.dart';
+import 'package:dhis2_demo_app/modules/login/models/user.dart';
+import 'package:dhis2_demo_app/modules/login/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,18 +20,56 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   Map<String, String> loginFormData = {};
   var inputFields = LoginConstants.getLoginFormInputs();
+  late bool loggingIn;
+
+  @override
+  void initState() {
+    setLoggingInState(false);
+    updatedLoginFormData('serverUrl', AppConstants.serverUrl);
+    super.initState();
+  }
+
+  void setLoggingInState(bool state) {
+    setState(() {
+      loggingIn = state;
+    });
+  }
 
   void onLogIn(BuildContext context) {
     if (inputFields.map((inputField) => inputField.id).every(
           (inputFieldId) => _isValueFilled(inputFieldId),
         )) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        ),
-      );
+      setLoggingInState(true);
+      var username = loginFormData['username'] ?? '';
+      var serverUrl = loginFormData['serverUrl'] ?? '';
+      var password = loginFormData['password'] ?? '';
+
+      UserService()
+          .login(
+        username: username,
+        password: password,
+        serverUrl: serverUrl,
+      )
+          .then((User? currentUser) {
+        if (currentUser != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HomePage(
+                currentUser: currentUser,
+              ),
+            ),
+          );
+        }
+        setLoggingInState(false);
+      }).catchError((error) {
+        setLoggingInState(false);
+        AppUtils.showToastMessage(
+          message: error.toString(),
+        );
+      });
     } else {
+      setLoggingInState(false);
       AppUtils.showToastMessage(
         message: 'Make sure all fields are filled!',
       );
@@ -37,12 +78,6 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isValueFilled(String id) {
     return (loginFormData[id] ?? '').isNotEmpty;
-  }
-
-  @override
-  void initState() {
-    updatedLoginFormData('serverUrl', AppConstants.serverUrl);
-    super.initState();
   }
 
   void updatedLoginFormData(String key, String value) {
@@ -126,12 +161,18 @@ class _LoginPageState extends State<LoginPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppConstants.defaultColor,
                           foregroundColor: Colors.white,
+                          minimumSize: const Size.fromHeight(50),
                           textStyle: const TextStyle(
                             fontSize: 20,
                           ),
                         ),
-                        onPressed: () => onLogIn(context),
-                        child: const Text('Login'),
+                        onPressed: () =>
+                            loggingIn == true ? null : onLogIn(context),
+                        child: loggingIn == true
+                            ? const CircularLoader(
+                                size: 2.0,
+                              )
+                            : const Text('Login'),
                       ),
                     ],
                   ),

@@ -12,4 +12,9 @@ class PreferenceService {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(preferenceKey);
   }
+
+  static Future<void> removePreferenceKey(String preferenceKey) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove(preferenceKey);
+  }
 }
