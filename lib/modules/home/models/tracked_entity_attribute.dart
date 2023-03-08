@@ -17,6 +17,16 @@ class TrackedEntityAttribute {
     );
   }
 
+  Map toJson() {
+    Map json = {};
+
+    json['id'] = id;
+    json['displayName'] = name;
+    json['valueType'] = valueType;
+
+    return json;
+  }
+
   @override
   String toString() {
     return name;

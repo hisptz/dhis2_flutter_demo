@@ -27,6 +27,18 @@ class ProgramStage {
     );
   }
 
+  Map toJson() {
+    Map json = {};
+
+    json['id'] = id;
+    json['displayName'] = name;
+    json['dataElements'] = (dataElements ?? [])
+        .map((dataElement) => dataElement.toJson())
+        .toList();
+
+    return json;
+  }
+
   @override
   String toString() {
     return name;

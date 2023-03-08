@@ -44,6 +44,20 @@ class Program {
     );
   }
 
+  Map toJson() {
+    Map json = {};
+
+    json['id'] = id;
+    json['displayName'] = name;
+    json['type'] = programType;
+    json['programStages'] =
+        programStages.map((programStage) => programStage.toJson()).toList();
+    json['programAttributes'] =
+        (programAttributes).map((attribute) => attribute.toJson()).toList();
+
+    return json;
+  }
+
   @override
   String toString() {
     return name;
