@@ -1,4 +1,5 @@
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
+import 'package:dhis2_demo_app/modules/home/components/program_summary_card.dart';
 import 'package:dhis2_demo_app/modules/home/models/program.dart';
 import 'package:dhis2_demo_app/modules/home/services/programs_service.dart';
 import 'package:dhis2_demo_app/modules/login/models/user.dart';
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Color backgroundColor = AppConstants.defaultColor.withOpacity(0.25);
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -58,28 +60,42 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Scaffold(
         body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: backgroundColor,
           ),
-          child: ListView(
-            children: programs.isEmpty
-                ? [
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 50, horizontal: 10),
-                        child: const Text(
-                          'There are no loaded programs. Please refresh!',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w700,
+          child: Scrollbar(
+            thumbVisibility: true,
+            trackVisibility: true,
+            child: ListView(
+              children: programs.isEmpty
+                  ? [
+                      Center(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 48, horizontal: 8),
+                          child: const Text(
+                            'There are no loaded programs. Please refresh!',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ]
-                : programs.map((program) => Text(program.name)).toList(),
+                    ]
+                  : programs
+                      .map(
+                        (program) => Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: ProgramSummaryCard(
+                            program: program,
+                          ),
+                        ),
+                      )
+                      .toList(),
+            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
