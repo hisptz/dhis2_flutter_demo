@@ -43,6 +43,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+        GlobalKey<RefreshIndicatorState>();
     Color backgroundColor = AppConstants.defaultColor.withOpacity(0.25);
 
     return Scaffold(
@@ -68,39 +70,46 @@ class _HomePageState extends State<HomePage> {
           child: Scrollbar(
             thumbVisibility: true,
             trackVisibility: true,
-            child: ListView(
-              children: programs.isEmpty
-                  ? [
-                      Center(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 48, horizontal: 8),
-                          child: const Text(
-                            'There are no loaded programs. Please refresh!',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w700,
+            child: RefreshIndicator(
+              key: refreshIndicatorKey,
+              color: Colors.white,
+              backgroundColor: AppConstants.defaultColor,
+              strokeWidth: 4.0,
+              onRefresh: () => fetchPrograms(),
+              child: ListView(
+                children: programs.isEmpty
+                    ? [
+                        Center(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 48, horizontal: 8),
+                            child: const Text(
+                              'There are no loaded programs. Please refresh!',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ]
-                  : programs
-                      .map(
-                        (program) => Container(
-                          margin: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: ProgramSummaryCard(
-                            program: program,
+                      ]
+                    : programs
+                        .map(
+                          (program) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: ProgramSummaryCard(
+                              program: program,
+                            ),
                           ),
-                        ),
-                      )
-                      .toList(),
+                        )
+                        .toList(),
+              ),
             ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            fetchPrograms();
+            refreshIndicatorKey.currentState?.show();
           },
           child: const Icon(Icons.refresh),
         ),

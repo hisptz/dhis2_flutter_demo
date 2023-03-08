@@ -10,27 +10,18 @@ class ProgramSummaryCard extends StatelessWidget {
 
   final Program program;
 
-  Widget _getProgramSummaryItem(
-    BuildContext context, {
-    required String label,
-    required String value,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      child: RichText(
-        text: TextSpan(
-          text: '$label: ',
-          style: DefaultTextStyle.of(context).style,
-          children: [
-            TextSpan(
-              text: value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-              ),
-            )
-          ],
+  @override
+  Widget build(BuildContext context) {
+    double borderRadius = 8.0;
+
+    return Material(
+      type: MaterialType.card,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(borderRadius),
         ),
       ),
+      child: _getBody(context),
     );
   }
 
@@ -88,18 +79,27 @@ class ProgramSummaryCard extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    double borderRadius = 8.0;
-
-    return Material(
-      type: MaterialType.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(borderRadius),
+  Widget _getProgramSummaryItem(
+    BuildContext context, {
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      child: RichText(
+        text: TextSpan(
+          text: '$label: ',
+          style: DefaultTextStyle.of(context).style,
+          children: [
+            TextSpan(
+              text: value,
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+              ),
+            )
+          ],
         ),
       ),
-      child: _getBody(context),
     );
   }
 }
