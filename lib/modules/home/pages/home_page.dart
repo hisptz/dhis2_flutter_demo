@@ -1,8 +1,13 @@
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
+import 'package:dhis2_demo_app/modules/login/models/user.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final User currentUser;
+  const HomePage({
+    super.key,
+    required this.currentUser,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();

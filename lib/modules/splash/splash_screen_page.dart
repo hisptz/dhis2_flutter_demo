@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:dhis2_demo_app/core/components/circular_loader.dart';
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
+import 'package:dhis2_demo_app/core/utils/app_utils.dart';
+import 'package:dhis2_demo_app/modules/home/pages/home_page.dart';
 import 'package:dhis2_demo_app/modules/login/login_page.dart';
+import 'package:dhis2_demo_app/modules/login/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreenPage extends StatefulWidget {
@@ -13,7 +16,7 @@ class SplashScreenPage extends StatefulWidget {
 }
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
-  late bool loading;
+  bool loading = true;
 
   void setLoadingState(bool state) {
     setState(() {
@@ -23,10 +26,8 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
   @override
   void initState() {
-    setLoadingState(true);
-    Timer(const Duration(seconds: 2), () {
-      // TODO check login status
-      setLoadingState(false);
+    Timer(const Duration(milliseconds: 500), () {
+      checkForCurrentUser();
     });
 
     super.initState();
@@ -39,6 +40,37 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         builder: (_) => const LoginPage(),
       ),
     );
+  }
+
+  void checkForCurrentUser() async {
+    var currentUser = await UserService().getCurrentUserCredentials();
+    if (currentUser.isEmpty) {
+      setLoadingState(false);
+    } else {
+      AppUtils.showToastMessage(message: 'Verifying user account!');
+      UserService()
+          .login(
+        username: currentUser['username'],
+        password: currentUser['password'],
+        serverUrl: AppConstants.serverUrl,
+      )
+          .then((loggedInUser) {
+        if (loggedInUser != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HomePage(
+                currentUser: loggedInUser,
+              ),
+            ),
+          );
+        } else {
+          setLoadingState(false);
+        }
+      }).catchError((error) {
+        setLoadingState(false);
+      });
+    }
   }
 
   @override
