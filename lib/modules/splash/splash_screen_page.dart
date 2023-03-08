@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dhis2_demo_app/core/components/circular_loader.dart';
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
 import 'package:dhis2_demo_app/core/utils/app_utils.dart';
-import 'package:dhis2_demo_app/modules/home/pages/home_page.dart';
+import 'package:dhis2_demo_app/modules/home/home_page.dart';
 import 'package:dhis2_demo_app/modules/login/login_page.dart';
 import 'package:dhis2_demo_app/modules/login/services/user_service.dart';
 import 'package:flutter/material.dart';

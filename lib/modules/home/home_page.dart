@@ -1,5 +1,8 @@
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
+import 'package:dhis2_demo_app/modules/home/models/program.dart';
+import 'package:dhis2_demo_app/modules/home/services/programs_service.dart';
 import 'package:dhis2_demo_app/modules/login/models/user.dart';
+import 'package:dhis2_demo_app/modules/login/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,16 +17,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<Map> programs;
+  late List<Program> programs;
   final String title = 'DHIS2 programs explorer';
 
-  List<Map> getPrograms() {
-    return [];
+  Future<void> fetchPrograms() async {
+    var currentUser = await UserService().getCurrentUserCredentials();
+    List<Program> fetchedPrograms = await ProgramService().getDHIS2Programs(
+      username: currentUser['username'],
+      password: currentUser['password'],
+    );
+
+    setState(() {
+      programs = fetchedPrograms.isNotEmpty ? fetchedPrograms : programs;
+    });
   }
 
   @override
   void initState() {
-    programs = [];
+    setState(() {
+      programs = [];
+    });
     super.initState();
   }
 
@@ -49,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           decoration: BoxDecoration(
             color: backgroundColor,
           ),
-          child: Column(
+          child: ListView(
             children: programs.isEmpty
                 ? [
                     Center(
@@ -66,11 +79,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ]
-                : [],
+                : programs.map((program) => Text(program.name)).toList(),
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            fetchPrograms();
+          },
           child: const Icon(Icons.refresh),
         ),
       ),

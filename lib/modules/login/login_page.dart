@@ -4,7 +4,7 @@ import 'package:dhis2_demo_app/core/components/text_input_field_container.dart';
 import 'package:dhis2_demo_app/core/constants/app_constants.dart';
 import 'package:dhis2_demo_app/core/models/input_field.dart';
 import 'package:dhis2_demo_app/core/utils/app_utils.dart';
-import 'package:dhis2_demo_app/modules/home/pages/home_page.dart';
+import 'package:dhis2_demo_app/modules/home/home_page.dart';
 import 'package:dhis2_demo_app/modules/login/constants/login_constants.dart';
 import 'package:dhis2_demo_app/modules/login/models/user.dart';
 import 'package:dhis2_demo_app/modules/login/services/user_service.dart';
